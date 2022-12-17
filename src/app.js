@@ -2,8 +2,7 @@ const express = require('express')
 const http = require('http')
 const config = require('./config/config.js')
 const connectDB = require('./db/mongodb.js')
-const validateBook = require('./validators/book.validator.js')
-
+const errorHandler = require('./middleware/errorHandler')
 
 const app = express()
 
@@ -15,9 +14,8 @@ app.get('/', (req, res) => {
   res.send('Bookstore here!')
 })
 
-// app.post('/books', validateBook.validateBook, (req, res) => {
-//   res.send('yes')
-// })
+// Use error handling middleware
+app.use(errorHandler)
 
 const server = http.createServer(app)
 // If a test is run, don't start this server
