@@ -3,6 +3,7 @@ const http = require('http')
 const config = require('./config/config.js')
 const connectDB = require('./db/mongodb.js')
 const errorHandler = require('./middleware/errorHandler')
+const apiv1 = require('./routes/index')
 
 const app = express()
 
@@ -14,6 +15,8 @@ app.get('/', (req, res) => {
   res.send('Bookstore here!')
 })
 
+app.use('/api/v1', apiv1)
+
 // Use error handling middleware
 app.use(errorHandler)
 
@@ -23,6 +26,5 @@ if (process.env.NODE_ENV !== 'test') {
   server.listen(config.PORT, async () => {
     await connectDB(config.DBURI)
     console.log(`Server is listening on port ${config.PORT}`)
-  }
-  )
+  })
 }
