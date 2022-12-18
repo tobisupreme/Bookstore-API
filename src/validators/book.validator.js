@@ -1,12 +1,12 @@
 const Joi = require('joi')
 const helper = require('./helper')
 
-const bookSchema = Joi.object({
-  title: Joi.string().alphanum().trim().required(),
+const newBookSchema = Joi.object({
+  title: Joi.string().trim().required(),
 
-  shortDescription: Joi.string().alphanum().max(128).trim().optional(),
+  shortDescription: Joi.string().trim().optional(),
 
-  longDescription: Joi.string().alphanum().min(128).trim().optional(),
+  longDescription: Joi.string().min(128).trim().optional(),
 
   year: Joi.number().integer().max(helper.getCurrentYear()),
 
@@ -15,14 +15,39 @@ const bookSchema = Joi.object({
   price: Joi.number().min(0).required(),
 })
 
-const validateBook = async (req, res, next) => {
+const updateBookSchema = Joi.object({
+  title: Joi.string().trim().optional(),
+
+  shortDescription: Joi.string().trim().optional(),
+
+  longDescription: Joi.string().min(128).trim().optional(),
+
+  year: Joi.number().integer().max(helper.getCurrentYear()).optional(),
+
+  price: Joi.number().min(0).optional(),
+})
+
+const validateNewBook = async (req, res, next) => {
   const book = req.body
   try {
-    await bookSchema.validateAsync(book)
+    await newBookSchema.validateAsync(book)
     next()
   } catch (error) {
     next(error)
   }
 }
 
-module.exports = validateBook
+const validateBookUpdate = async (req, res, next) => {
+  const book = req.body
+  try {
+    await updateBookSchema.validateAsync(book)
+    next()
+  } catch (error) {
+    next(error)
+  }
+}
+
+module.exports = {
+  validateNewBook,
+  validateBookUpdate,
+}

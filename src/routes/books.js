@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const bookValidator = require('../validators/book.validator')
+const { validateNewBook, validateBookUpdate } = require('../validators/book.validator')
 const Book = require('../models/Book')
 
 /**
@@ -7,7 +7,7 @@ const Book = require('../models/Book')
  * @route /api/v1/books
  * @method POST
  */
-router.route('/').post(bookValidator, async (req, res, next) => {
+router.route('/').post(validateNewBook, async (req, res, next) => {
   try {
     const savedBook = await Book.create(req.body)
     return res.status(201).json(savedBook)
@@ -52,7 +52,7 @@ router
  * @route /api/v1/books/:id
  * @method PATCH
  */
-  .patch(async (req, res, next) => {
+  .patch(validateBookUpdate, async (req, res, next) => {
     const { id } = req.params
     const payload = { ...req.body, updatedAt: Date.now() }
     try {
