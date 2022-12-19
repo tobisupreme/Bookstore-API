@@ -6,6 +6,8 @@ const errorHandler = require('./middleware/errorHandler')
 const apiv1 = require('./routes/index')
 const helmet = require('helmet')
 const { limiter } = require('./config/rateLimit')
+const { requiresAuth } = require('express-openid-connect')
+const auth0Config = require('./auth/auth0')
 
 const app = express()
 
@@ -15,12 +17,15 @@ app.use(helmet()) // add security headers || https://www.npmjs.com/package/helme
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 
+app.use(auth0Config) // auth0 middleware for authentication
+
 app.get('/', (req, res) => {
   res.send('Bookstore here!')
 })
 
 app.use(limiter) // apply rate limiting middleware to all requests
-app.use('/api/v1', apiv1)
+
+app.use('/api/v1', requiresAuth(), apiv1)
 
 // Use error handling middleware
 app.use(errorHandler)
