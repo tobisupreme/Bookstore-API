@@ -4,10 +4,14 @@ const config = require('./config/config.js')
 const connectDB = require('./db/mongodb.js')
 const errorHandler = require('./middleware/errorHandler')
 const apiv1 = require('./routes/index')
+const helmet = require('helmet')
+const { limiter } = require('./config/rateLimit')
 
 const app = express()
 
 // Middleware
+app.use(helmet()) // add security headers || https://www.npmjs.com/package/helmet
+
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 
@@ -15,6 +19,7 @@ app.get('/', (req, res) => {
   res.send('Bookstore here!')
 })
 
+app.use(limiter) // apply rate limiting middleware to all requests
 app.use('/api/v1', apiv1)
 
 // Use error handling middleware
